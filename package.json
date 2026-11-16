@@ -1,0 +1,16 @@
+{
+  "name": "hangzhou-sketchbook",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "fonts": "node scripts/subset-fonts.mjs"
+  },
+  "dependencies": {
+    "three": "^0.187.0",
+    "vite": "^8.3.8"
+  }
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>杭州速写本 · A Sketchbook of Hangzhou</title>
+<meta name="description" content="一本摊开在杭州的速写本：八页 three.js 实时水墨线稿，从断桥残雪到钱塘新潮。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f4efe3'/%3E%3Crect x='6' y='6' width='20' height='20' rx='3' fill='%23b5432e'/%3E%3Ctext x='16' y='22' font-size='13' text-anchor='middle' fill='%23f4efe3' font-family='serif'%3E杭%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="wash" aria-hidden="true"></div>
+<canvas id="ambient" class="ambient" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+<header class="top">
+  <a class="name" href="#sketchbook">杭州速写本<span class="name-latin">Hangzhou Sketchbook</span></a>
+  <nav id="nav" aria-label="主导航"></nav>
+</header>
+
+<main class="page">
+  <section id="sketchbook" class="hero">
+    <p class="hero-kicker" id="kicker"></p>
+    <div class="sb-wrap" id="sbWrap">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <filter id="sb-mblur-1"><feGaussianBlur stdDeviation="5 0"/></filter>
+        <filter id="sb-mblur-2"><feGaussianBlur stdDeviation="14 0"/></filter>
+      </svg>
+      <div class="sb-stage" id="sbStage">
+        <button class="sb-arrow left" id="sbLeft" aria-label="上一页"></button>
+        <div class="sb-3d" id="sb3d">
+          <div class="sb-tilt" id="sbTilt">
+            <div class="sb-cast ambient" aria-hidden="true"></div>
+            <div class="sb-cast contact" aria-hidden="true"></div>
+            <div class="sb-cast hair" aria-hidden="true"></div>
+            <div class="sb-book" id="sbBook"></div>
+          </div>
+          <div class="zoomwrap" id="zoomWrap" aria-hidden="true"><div class="zoominner" id="zoomInner"></div></div>
+          <div class="loupe" id="loupe"><span class="grip"></span><span class="ring"><span class="lens" id="loupeLens"></span></span></div>
+        </div>
+        <button class="sb-arrow right" id="sbRight" aria-label="下一页"></button>
+      </div>
+      <div class="sb-captions" id="sbCaptions" aria-live="polite"></div>
+      <div class="sb-tools" role="group" aria-label="画册工具">
+        <button class="tool" id="zOut" aria-label="缩小"></button>
+        <span class="zoom-read" id="zRead">100%</span>
+        <button class="tool" id="zIn" aria-label="放大"></button>
+        <span class="tool-sep" aria-hidden="true"></span>
+        <button class="tool" id="loupeBtn" aria-label="放大镜" aria-pressed="true"></button>
+        <button class="tool" id="boilBtn" aria-label="线条呼吸" aria-pressed="true"></button>
+        <span class="tool-sep" aria-hidden="true"></span>
+        <label class="ink-ctl" title="墨色浓淡">
+          <span class="ink-glyph">墨</span>
+          <input type="range" id="inkRange" min="55" max="130" value="112" aria-label="墨色浓淡">
+        </label>
+        <span class="tool-sep" aria-hidden="true"></span>
+        <button class="tool" id="dlBtn" aria-label="收藏此页"></button>
+      </div>
+      <p class="sb-hint" id="sbHint"></p>
+      <div class="sb-loading" id="sbLoading"><span class="load-seal">杭</span><span id="loadText">装订中…</span></div>
+    </div>
+    <button class="hero-down" id="heroDown" aria-label="向下滚动"></button>
+  </section>
+
+  <div class="rule" data-rule aria-hidden="true"></div>
+
+  <section id="seasons" class="seasons">
+    <p class="section-label reveal">湖上四季</p>
+    <p class="section-intro reveal" id="seasonsIntro"></p>
+    <div class="season-grid" id="seasonGrid"></div>
+  </section>
+
+  <div class="rule short" data-rule aria-hidden="true"></div>
+
+  <section id="about" class="about">
+    <div class="about-text">
+      <p class="section-label reveal">关于此册</p>
+      <div id="aboutParas"></div>
+    </div>
+    <div class="about-art reveal">
+      <div class="osmanthus" id="osmanthus" aria-hidden="true"></div>
+      <p class="vertical" id="aboutVertical"></p>
+    </div>
+  </section>
+
+  <div class="rule short" data-rule aria-hidden="true"></div>
+
+  <section id="plates" class="plates">
+    <p class="section-label reveal">目录 · 八页</p>
+    <ol class="plate-list" id="plateList"></ol>
+  </section>
+
+  <footer class="colophon" id="colophon">
+    <div class="seal-stamp" id="sealStamp" aria-hidden="true"></div>
+    <p class="colophon-title reveal">画于西子湖畔</p>
+    <p class="colophon-line reveal">以代码为墨，以屏幕为纸。</p>
+    <button class="export-btn reveal" id="exportBtn"></button>
+    <p class="colophon-meta reveal" id="colophonMeta"></p>
+    <p class="colophon-date reveal">二〇二六年 · 秋</p>
+    <a href="#sketchbook" class="back reveal">回到卷首 ↑</a>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
