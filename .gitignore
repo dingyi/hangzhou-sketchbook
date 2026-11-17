@@ -1,5 +1,23 @@
+# dependencies
 node_modules
+
+# build output
 dist
+
+# local / sandbox state
 .amp
+.vercel
+.env
+.env.*
+*.local
+
+# generated font charset
 scripts/charset.txt
-*.logplate-*.png
+
+# logs & scratch captures
+*.log
+plate-*.png
+
+# os / editor
+.DS_Store
+Thumbs.db
