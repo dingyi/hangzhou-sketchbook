@@ -198,11 +198,17 @@ async function boot() {
     $('boilBtn').setAttribute('aria-pressed', String(on));
     stage.setBoil(on);
   };
-  let inkTimer = null;
+  const applyInkFilter = (d) => {
+    const contrast = (0.72 + d * 0.33).toFixed(3);
+    const bright = (1.05 - d * 0.045).toFixed(3);
+    const sat = (0.82 + d * 0.2).toFixed(3);
+    $('sb3d').style.setProperty('--ink-filter', `contrast(${contrast}) brightness(${bright}) saturate(${sat})`);
+  };
+  applyInkFilter(1.12);
   $('inkRange').oninput = (e) => {
-    stage.setDensity(parseInt(e.target.value, 10) / 100);
-    clearTimeout(inkTimer);
-    inkTimer = setTimeout(() => stage.refreshSnapshots(), 260);
+    const d = parseInt(e.target.value, 10) / 100;
+    stage.setDensity(d);
+    applyInkFilter(d);
   };
   const exportPage = () => {
     const p = PLATES[book.idx];

@@ -22,6 +22,11 @@ export class Book {
     this.drag = null; this.introOn = false;
     this.onTick = null; this.onPaint = null;
     this.live = el('div', 'sb-live');
+    this.artImg = new Image();
+    this.artImg.className = 'sb-art';
+    this.artImg.draggable = false;
+    this.artImg.alt = '';
+    this.live.appendChild(this.artImg);
     this.book.appendChild(this.live);
     const zp = el('button', 'sb-zone sb-prev'); zp.setAttribute('aria-label', '上一页');
     const zn = el('button', 'sb-zone sb-next'); zn.setAttribute('aria-label', '下一页');
@@ -78,6 +83,8 @@ export class Book {
   paint() {
     this.book.querySelectorAll('.sb-half,.curl').forEach((n) => n.remove());
     if (!this.turn) {
+      this.artImg.src = this.snaps[this.idx];
+      this.artImg.alt = this.pages[this.idx].title + ' · ' + this.pages[this.idx].place;
       this.live.style.visibility = 'visible';
       this.sb3d.style.setProperty('--shade', '0');
     } else {

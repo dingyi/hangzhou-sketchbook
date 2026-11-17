@@ -18,6 +18,9 @@ scripts/charset.txt
 *.log
 plate-*.png
 
+# painter source PNGs (app ships optimized webp)
+public/plates/*.png
+
 # os / editor
 .DS_Store
 Thumbs.db

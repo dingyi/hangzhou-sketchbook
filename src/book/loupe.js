@@ -27,7 +27,7 @@ export class Loupe {
 
   rest() {
     const w = this.bookEl.clientWidth, h = this.bookEl.clientHeight;
-    this.lx = w * 0.6; this.ly = h * 0.82;
+    this.lx = w * 0.85; this.ly = h * 0.8;
     this.place();
   }
 
