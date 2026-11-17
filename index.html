@@ -963,6 +963,7 @@ loupeBtn.onclick=()=>{
   loupeBtn.setAttribute('aria-pressed',String(loupeOn));
   loupe.classList.toggle('on',loupeOn);
   if(loupeOn&&lx===null)restLoupe();
+  placeLoupe();                          // 同步放大副本的显隐，避免关闭后残留
 };
 addEventListener('resize',()=>{lx=null;restLoupe();});
 

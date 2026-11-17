@@ -21,8 +21,9 @@ export function makeSketch(ctx, seed) {
 
   /* ---------- 墨线：两遍抖动，模拟钢笔 */
   S.line = (pts, { w = 1.5, col = '43,38,30', a = 0.82, jit = 1.4, passes = 2 } = {}) => {
+    const A = Math.min(0.95, a * 1.26);           // 整体提墨：线稿对比度
     for (let p = 0; p < passes; p++) {
-      const ww = p ? w * 0.55 : w, aa = p ? a * 0.38 : a, off = p ? 0.8 : 0;
+      const ww = p ? w * 0.55 : w, aa = p ? A * 0.38 : A, off = p ? 0.8 : 0;
       ctx.strokeStyle = `rgba(${col},${aa})`;
       ctx.lineWidth = ww; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
@@ -50,6 +51,12 @@ export function makeSketch(ctx, seed) {
     }
     S.line(pts, o);
   };
+  /* 直角折线：逐边绘制，避免二次平滑把矩形墙角抹成圆拱 */
+  S.path = (pts, o = {}) => {
+    for (let i = 0; i < pts.length - 1; i++) {
+      S.seg(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], o);
+    }
+  };
 
   /* ---------- 水彩：模糊多层晕染 + 边缘积色 */
   const smoothPath = (pts) => {
@@ -68,12 +75,12 @@ export function makeSketch(ctx, seed) {
     ctx.filter = `blur(${blur}px)`;
     for (let l = 0; l < 3; l++) {
       const sc = 0.9 + l * 0.07;
-      ctx.fillStyle = `rgba(${col},${a * 0.34})`;
+      ctx.fillStyle = `rgba(${col},${a * 0.4})`;
       smoothPath(pts.map(([x, y]) => [cx + (x - cx) * sc + j(4), cy + (y - cy) * sc + j(4)]));
       ctx.fill();
     }
     ctx.restore();
-    ctx.strokeStyle = `rgba(${col},${a * 0.4})`; ctx.lineWidth = 1.2;
+    ctx.strokeStyle = `rgba(${col},${a * 0.48})`; ctx.lineWidth = 1.2;
     smoothPath(pts.map(([x, y]) => [x + j(2), y + j(2)]));
     ctx.stroke();
   };
@@ -105,7 +112,13 @@ export function makeSketch(ctx, seed) {
     const fill = [...pts, [x1 + 60, BY0 + BH + 60], [x0 - 60, BY0 + BH + 60]];
     ctx.save();
     ctx.filter = 'blur(7px)';
-    ctx.fillStyle = `rgba(${col},${a * 0.8})`;
+    // 两端淡出，避免山体色块在画面里留下生硬的竖直边
+    const fg = ctx.createLinearGradient(x0 - 60, 0, x1 + 60, 0);
+    fg.addColorStop(0, `rgba(${col},0)`);
+    fg.addColorStop(0.14, `rgba(${col},${a * 0.8})`);
+    fg.addColorStop(0.86, `rgba(${col},${a * 0.8})`);
+    fg.addColorStop(1, `rgba(${col},0)`);
+    ctx.fillStyle = fg;
     ctx.beginPath();
     fill.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
     ctx.closePath(); ctx.fill();
@@ -135,16 +148,24 @@ export function makeSketch(ctx, seed) {
 
   /* ---------- 树 */
   S.willow = (x, y, h, s = 1) => {
-    S.curve(x, y, x + 6 * s, y - h * 0.55, x + 14 * s, y - h, { w: 2.6 * s, a: 0.8 });
-    S.curve(x + 5 * s, y, x + 12 * s, y - h * 0.5, x + 19 * s, y - h * 0.96, { w: 1.4 * s, a: 0.5 });
+    // 主干：略弯，两道笔触显出体积
+    S.curve(x, y, x - 4 * s, y - h * 0.5, x + 12 * s, y - h, { w: 3.2 * s, a: 0.85 });
+    S.curve(x + 6 * s, y, x + 4 * s, y - h * 0.45, x + 19 * s, y - h * 0.95, { w: 1.6 * s, a: 0.5 });
     const topX = x + 15 * s, topY = y - h;
-    S.blob(topX + 8 * s, topY + h * 0.22, 46 * s, h * 0.34, '120,140,100', 0.14);
-    for (let b = 0; b < 9; b++) {
-      const bx = topX + j(56 * s), len = h * (0.42 + R() * 0.4), sway = (10 + R() * 26) * s;
-      S.curve(bx, topY + j(14 * s), bx + sway * 0.4, topY + len * 0.6, bx + sway, topY + len, { w: 1 * s, a: 0.5, col: '70,88,60', passes: 1 });
-      for (let t = 0.15; t < 0.95; t += 0.1) {
+    // 顶部几根分枝
+    for (const [dx, dy] of [[-34, 14], [-12, 4], [16, 2], [38, 16]]) {
+      S.curve(topX, topY + 6 * s, topX + dx * 0.5 * s, topY + dy * s - 8 * s, topX + dx * s, topY + dy * s, { w: 1.4 * s, a: 0.6, passes: 1 });
+    }
+    // 树冠水彩
+    S.blob(topX + 6 * s, topY + h * 0.2, 54 * s, h * 0.36, '118,140,96', 0.2);
+    S.blob(topX + 20 * s, topY + h * 0.34, 40 * s, h * 0.3, '104,128,84', 0.16);
+    // 垂柳丝
+    for (let b = 0; b < 13; b++) {
+      const bx = topX + j(72 * s), len = h * (0.5 + R() * 0.42), sway = (12 + R() * 30) * s;
+      S.curve(bx, topY + j(16 * s), bx + sway * 0.35, topY + len * 0.55, bx + sway, topY + len, { w: 1.1 * s, a: 0.6, col: '66,86,56', passes: 1 });
+      for (let t = 0.12; t < 0.96; t += 0.075) {
         const px = bx + sway * t * t, py = topY + len * t;
-        S.seg(px, py, px + 4 * s, py + 5 * s, { w: 0.9 * s, a: 0.42, col: '70,88,60', passes: 1, jit: 0.5 });
+        S.seg(px, py, px + 4.5 * s, py + 6 * s, { w: 1 * s, a: 0.5, col: '66,86,56', passes: 1, jit: 0.5 });
       }
     }
   };
@@ -263,8 +284,8 @@ export function makeSketch(ctx, seed) {
       }
       S.line(pts, { w: 1.8, a: 0.8, col });
       S.line(pts.map(([x, y]) => [x + (x - ax) * 0.08, y - 4]), { w: 1, a: 0.4, col, passes: 1 });
-      // 倒影
-      S.line(pts.map(([x, y]) => [x + j(4), wy + (wy - y) * 0.55 + 4]), { w: 1.2, a: 0.2, col, passes: 1, jit: 2.4 });
+      // 倒影：压扁、抖散，避免与拱券拼成一个生硬的整圆
+      S.line(pts.map(([x, y]) => [x + j(7), wy + (wy - y) * 0.42 + 5 + j(2)]), { w: 1.1, a: 0.13, col, passes: 1, jit: 3.2 });
     }
     // 桥身石缝
     S.seg(x0, deckY + h * 0.5, x0 + w * 0.06, deckY + 4, { w: 1.4, a: 0.6, col });
@@ -276,9 +297,9 @@ export function makeSketch(ctx, seed) {
     S.poly([[x0, deckY + 4], [x1, deckY + 4], [x1, deckY + h * 0.5], [x0, deckY + h * 0.5]], '150,136,112', 0.12);
   };
   S.boat = (x, y, s, canopy = true) => {
-    S.poly([[x - 34 * s, y - 6 * s], [x - 20 * s, y + 4 * s], [x + 22 * s, y + 4 * s], [x + 38 * s, y - 8 * s], [x + 26 * s, y - 2 * s], [x - 24 * s, y - 2 * s]], '96,84,64', 0.24, 2);
+    S.poly([[x - 34 * s, y - 6 * s], [x - 20 * s, y + 4 * s], [x + 22 * s, y + 4 * s], [x + 38 * s, y - 8 * s], [x + 26 * s, y - 2 * s], [x - 24 * s, y - 2 * s]], '96,84,64', 0.34, 2);
     S.curve(x - 34 * s, y - 6 * s, x, y + 10 * s, x + 38 * s, y - 8 * s, { w: 1.8, a: 0.8 });
-    S.curve(x - 30 * s, y - 3 * s, x, y + 5 * s, x + 33 * s, y - 5 * s, { w: 1, a: 0.45, passes: 1 });
+    S.curve(x - 30 * s, y - 3 * s, x, y + 5 * s, x + 33 * s, y - 5 * s, { w: 1, a: 0.6, passes: 1 });
     if (canopy) {
       S.curve(x - 16 * s, y - 4 * s, x, y - 24 * s, x + 16 * s, y - 4 * s, { w: 1.5, a: 0.75 });
       S.poly([[x - 16 * s, y - 4 * s], [x, y - 22 * s], [x + 16 * s, y - 4 * s]], '90,80,64', 0.26, 2);
@@ -288,7 +309,7 @@ export function makeSketch(ctx, seed) {
       S.blob(x + 12 * s, y - 21 * s, 2.6 * s, 3 * s, '50,44,36', 0.6, 0.1, 1);
       S.seg(x + 14 * s, y - 14 * s, x + 26 * s, y + 2 * s, { w: 1, a: 0.55, passes: 1 });
     }
-    S.refl(x, y + 8 * s, 16 * s, '70,80,86', 0.18, 1.4 * s);
+    S.refl(x, y + 8 * s, 18 * s, '70,80,86', 0.26, 1.4 * s);
   };
   S.lantern = (x, y, s, glow = false) => {
     if (glow) S.blob(x, y, 13 * s, 13 * s, '226,150,80', 0.22);
@@ -321,8 +342,8 @@ export function makeSketch(ctx, seed) {
       const k = d < 0.5 ? 0.25 + d : 1 + j(0.12);
       pts.push([cx + Math.cos(t) * r * k, cy + Math.sin(t) * r * k * 0.82]);
     }
-    S.poly(pts, col, 0.26);
-    S.line(pts, { w: 1.3, a: 0.55, col: '60,86,56' });
+    S.poly(pts, col, 0.32);
+    S.line(pts, { w: 1.3, a: 0.65, col: '60,86,56' });
     for (let i = 0; i < 9; i++) {
       const t = notch + 0.6 + (i / 9) * (Math.PI * 2 - 1.2);
       S.seg(cx, cy, cx + Math.cos(t) * r * 0.86, cy + Math.sin(t) * r * 0.7, { w: 0.8, a: 0.3, col: '60,86,56', passes: 1 });
@@ -343,8 +364,8 @@ export function makeSketch(ctx, seed) {
         const u = k / 10;
         pts.push([px + (tipX - px) * u + Math.sin(u * Math.PI) * 6 * s * Math.sign(t || 1), py + (tipY - py) * u]);
       }
-      S.poly(pts, '214,138,150', 0.3);
-      S.line(pts, { w: 1, a: 0.5, col: '160,84,100', passes: 1 });
+      S.poly(pts, '214,138,150', 0.38);
+      S.line(pts, { w: 1, a: 0.6, col: '160,84,100', passes: 1 });
       S.seg(tipX, tipY, tipX + j(2), tipY + 5 * s, { w: 1.4, a: 0.5, col: '190,100,116', passes: 1 });
     }
     if (!bud) { ctx.fillStyle = 'rgba(206,170,80,.7)'; ctx.beginPath(); ctx.arc(x, y - 8 * s, 4 * s, 0, 7); ctx.fill(); }
@@ -353,10 +374,17 @@ export function makeSketch(ctx, seed) {
   S.koi = (x, y, s, rot, col = '196,84,52') => {
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
     const body = [[-16 * s, 0], [-8 * s, -5 * s], [6 * s, -4 * s], [14 * s, 0], [6 * s, 4 * s], [-8 * s, 5 * s]];
-    S.poly(body, col, 0.4);
-    S.line([...body, body[0]], { w: 1, a: 0.45, col: '120,60,40', passes: 1 });
-    S.poly([[-16 * s, 0], [-26 * s, -6 * s], [-23 * s, 0], [-26 * s, 6 * s]], col, 0.3);
-    S.blob(2 * s, -1 * s, 4 * s, 2.6 * s, '240,236,226', 0.5, 0.2);
+    S.poly(body, col, 0.55);
+    S.line([...body, body[0]], { w: 1.2, a: 0.6, col: '120,60,40', passes: 1 });
+    // 尾鳍
+    S.poly([[-16 * s, 0], [-27 * s, -7 * s], [-22 * s, 0], [-27 * s, 7 * s]], col, 0.45);
+    S.line([[-16 * s, 0], [-27 * s, -7 * s], [-22 * s, 0], [-27 * s, 7 * s], [-16 * s, 0]], { w: 1, a: 0.5, col: '120,60,40', passes: 1 });
+    // 胸鳍
+    S.poly([[2 * s, -3 * s], [-2 * s, -9 * s], [6 * s, -4 * s]], col, 0.4);
+    S.poly([[2 * s, 3 * s], [-2 * s, 9 * s], [6 * s, 4 * s]], col, 0.4);
+    // 白斑与眼
+    S.blob(2 * s, -1 * s, 4.5 * s, 2.8 * s, '244,240,230', 0.6, 0.2);
+    ctx.fillStyle = 'rgba(40,34,28,.8)'; ctx.beginPath(); ctx.arc(10 * s, -1.2 * s, 1.1 * s, 0, 7); ctx.fill();
     ctx.restore();
   };
   S.stoneLantern3 = (x, y, s, glow = false) => {
@@ -376,13 +404,13 @@ export function makeSketch(ctx, seed) {
     S.curve(x - 8 * s, by - 16 * s, x, by - 27 * s, x + 8 * s, by - 16 * s, { w: 1.3, a: 0.7 });
     S.seg(x, by - 25 * s, x, by - 31 * s, { w: 1.3, a: 0.7, passes: 1 });
     S.blob(x, by - 33 * s, 2.6 * s, 2.6 * s, '90,82,70', 0.5, 0.1);
-    S.refl(x, y + 6 * s, 30 * s, '70,80,86', 0.22, 1.6 * s);
-    if (glow) S.refl(x, y + 6 * s, 22 * s, '210,160,90', 0.3, 1.2 * s);
+    S.refl(x, y + 6 * s, 34 * s, '70,80,86', 0.3, 1.6 * s);
+    if (glow) S.refl(x, y + 6 * s, 26 * s, '210,160,90', 0.42, 1.2 * s);
   };
 
   /* ---------- 文字与印章 */
   S.vtext = (text, x, y, size, col = '52,46,38', gap = 1.22) => {
-    ctx.fillStyle = `rgba(${col},.82)`;
+    ctx.fillStyle = `rgba(${col},.9)`;
     ctx.font = `${size}px ${CJK}`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     [...text].forEach((ch, i) => ctx.fillText(ch, x + j(1.2), y + i * size * gap + j(1.2)));

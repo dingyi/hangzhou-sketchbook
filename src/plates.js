@@ -62,15 +62,15 @@ function hefang(S, ctx) {
   // 左侧商铺（近大）
   const shop = (x, w, h, floors, sign) => {
     const y = 830;
-    S.poly([[x, y], [x + w, y], [x + w, y - h], [x, y - h]], '226,214,190', 0.24);
-    S.line([[x, y], [x, y - h], [x + w, y - h], [x + w, y]], { w: 1.6, a: 0.75 });
+    S.poly([[x, y], [x + w, y], [x + w, y - h], [x, y - h]], '226,214,190', 0.28);
+    S.path([[x, y], [x, y - h], [x + w, y - h], [x + w, y]], { w: 1.6, a: 0.75 });
     S.roof(x + w / 2, y - h, w * 1.12, 30);
     for (let f = 0; f < floors; f++) {
       const fy = y - h * (f + 1) / (floors + 0.4);
       S.seg(x + 6, fy, x + w - 6, fy, { w: 1.1, a: 0.5, passes: 1 });
       for (let k = 0; k < 3; k++) {
         const wx = x + w * (k + 0.5) / 3;
-        S.line([[wx - 12, fy - 8], [wx + 12, fy - 8], [wx + 12, fy - 34], [wx - 12, fy - 34], [wx - 12, fy - 8]], { w: 1, a: 0.5, passes: 1 });
+        S.path([[wx - 12, fy - 8], [wx + 12, fy - 8], [wx + 12, fy - 34], [wx - 12, fy - 34], [wx - 12, fy - 8]], { w: 1, a: 0.5, passes: 1 });
         S.seg(wx, fy - 8, wx, fy - 34, { w: 0.7, a: 0.35, passes: 1 });
       }
     }
@@ -89,7 +89,7 @@ function hefang(S, ctx) {
   shop(1180, 170, 230, 2, '伞');
   shop(1370, 190, 260, 2, '药');
   // 牌坊
-  const px = 800, py = 840, pw = 300, ph = 300;
+  const px = 800, py = 848, pw = 300, ph = 300;
   for (const k of [-0.5, -0.17, 0.17, 0.5]) S.seg(px + pw * k, py, px + pw * k, py - ph * (Math.abs(k) > 0.3 ? 0.72 : 0.92), { w: 3, a: 0.8, col: '80,70,58' });
   S.seg(px - pw * 0.55, py - ph * 0.66, px + pw * 0.55, py - ph * 0.66, { w: 2.2, a: 0.75, col: '80,70,58' });
   S.seg(px - pw * 0.22, py - ph * 0.86, px + pw * 0.22, py - ph * 0.86, { w: 2, a: 0.75, col: '80,70,58' });
@@ -99,24 +99,24 @@ function hefang(S, ctx) {
   ctx.fillStyle = 'rgba(52,46,38,.82)'; ctx.fillRect(px - 56, py - ph * 0.84, 112, 34);
   S.label('河坊街', px, py - ph * 0.84 + 18, 22, '238,228,204');
   // 灯笼串
-  S.curve(430, 560, 800, 640, 1180, 570, { w: 1, a: 0.45, passes: 1 });
+  S.curve(430, 540, 800, 606, 1180, 548, { w: 1, a: 0.5, passes: 1 });
   for (let i = 1; i < 7; i++) {
     const t = i / 7, u = 1 - t;
     const lx = u * u * 430 + 2 * u * t * 800 + t * t * 1180;
-    const ly = u * u * 560 + 2 * u * t * 640 + t * t * 570;
+    const ly = u * u * 540 + 2 * u * t * 606 + t * t * 548;
     S.seg(lx, ly, lx, ly + 10, { w: 0.9, a: 0.5, passes: 1 });
     S.lantern(lx, ly + 20, 1.05);
   }
   // 石板路
   for (let i = 0; i < 12; i++) {
     const t = i / 12, y = 850 + t * 74;
-    S.seg(300 - t * 120, y, 1500 + t * 100, y + 2, { w: 0.9, a: 0.16 + t * 0.1, passes: 1 });
+    S.seg(300 - t * 120, y, 1500 + t * 100, y + 2, { w: 0.9, a: 0.2 + t * 0.12, passes: 1 });
   }
   for (let i = 0; i < 9; i++) {
     const x = 380 + i * 130;
-    S.seg(x, 852, x + (x - 880) * 0.16, 926, { w: 0.8, a: 0.14, passes: 1 });
+    S.seg(x, 852, x + (x - 880) * 0.16, 926, { w: 0.8, a: 0.16, passes: 1 });
   }
-  S.figure(680, 900, 1.2); S.figure(950, 892, 1.1); S.figure(1060, 906, 1.25); S.figure(560, 880, 0.95);
+  S.figure(680, 902, 1.5); S.figure(950, 894, 1.4); S.figure(1060, 908, 1.55); S.figure(560, 882, 1.2);
 }
 
 /* 03 曲院风荷：莲叶莲花 + 曲桥 + 亭 */
@@ -124,7 +124,7 @@ function quyuan(S, ctx) {
   S.band(AX, R1, AY + 60, 100, '180,190,170', 0.12);
   S.hills(AX, R1, AY + 210, 90, '130,144,124', 0.12, 2.4);
   S.willow(300, 640, 220, 1.1);
-  S.water(AX, R1, 620, B1, '120,140,140', 0.14);
+  S.water(AX, R1, 620, B1, '118,138,138', 0.18);
   // 曲桥（低平折桥）
   const by = 700;
   const segs = [[560, by], [760, by - 14], [980, by + 6], [1180, by - 10]];
@@ -150,8 +150,10 @@ function quyuan(S, ctx) {
   S.lotusFlower(1470, 730, 1.3);
   S.lotusFlower(640, 820, 1.1, true);
   // 蜻蜓
-  S.seg(700, 700, 726, 694, { w: 1.2, a: 0.6, col: '150,80,60', passes: 1 });
-  for (const [dx, dy] of [[-4, -8], [4, -8], [-4, 6], [4, 6]]) S.curve(712, 697, 712 + dx * 2, 697 + dy, 712 + dx * 3.4, 697 + dy * 1.4, { w: 0.8, a: 0.4, passes: 1 });
+  const dx0 = 860, dy0 = 616;
+  S.seg(dx0, dy0, dx0 + 30, dy0 - 6, { w: 1.6, a: 0.7, col: '150,80,60', passes: 1 });
+  S.blob(dx0 + 30, dy0 - 6, 2.4, 2.4, '150,80,60', 0.7, 0.1);
+  for (const [dx, dy] of [[-5, -10], [5, -10], [-5, 8], [5, 8]]) S.curve(dx0 + 12, dy0 - 2, dx0 + 12 + dx * 2, dy0 - 2 + dy, dx0 + 12 + dx * 3.6, dy0 - 2 + dy * 1.5, { w: 0.9, a: 0.5, col: '120,110,90', passes: 1 });
   S.birds(1150, AY + 70, 2);
 }
 
@@ -159,7 +161,7 @@ function quyuan(S, ctx) {
 function huagang(S, ctx) {
   S.band(AX, R1, AY + 60, 100, '186,196,176', 0.12);
   S.hills(AX, R1, AY + 200, 80, '130,144,124', 0.12, 0.8);
-  S.water(AX, R1, 600, B1, '126,146,142', 0.16);
+  S.water(AX, R1, 600, B1, '122,142,138', 0.2);
   S.stoneBridge(430, 640, 340, 110, 1);
   S.pavilion(1290, 640, 160, 140);
   S.willow(220, 620, 230, 1.15);
@@ -171,70 +173,87 @@ function huagang(S, ctx) {
     S.curve(x - 30 * s, y + 8, x, y + 12, x + 30 * s, y + 8, { w: 0.8, a: 0.14, col: '70,90,90', passes: 1 });
   }
   // 池石岸
-  S.poly(S.blobPts(300, 900, 110, 34, 12, 0.3), '150,142,124', 0.18);
-  S.poly(S.blobPts(1520, 910, 100, 30, 12, 0.3), '150,142,124', 0.18);
+  S.poly(S.blobPts(300, 900, 110, 34, 12, 0.3), '150,142,124', 0.26);
+  S.line(S.blobPts(300, 900, 110, 34, 12, 0.3), { w: 1.2, a: 0.45 });
+  S.poly(S.blobPts(1520, 910, 100, 30, 12, 0.3), '150,142,124', 0.26);
+  S.line(S.blobPts(1520, 910, 100, 30, 12, 0.3), { w: 1.2, a: 0.45 });
   S.birds(1050, AY + 70, 3);
 }
 
 /* 05 三潭印月：月夜 + 三座石塔 */
 function santan(S, ctx) {
-  S.band(AX, R1, AY + 90, 170, '96,110,128', 0.2);
-  S.band(AX, R1, AY + 230, 90, '120,132,146', 0.12);
+  // 夜空：更深的蓝灰，让月亮与灯火跳出来
+  S.band(AX, R1, AY + 90, 170, '86,100,120', 0.3);
+  S.band(AX, R1, AY + 230, 90, '106,120,136', 0.18);
   // 月
   const mx = 1370, my = AY + 130;
-  S.blob(mx, my, 92, 92, '210,206,186', 0.12, 0.06);
-  ctx.fillStyle = 'rgba(246,242,226,.9)';
+  S.blob(mx, my, 104, 104, '214,210,190', 0.16, 0.06);
+  ctx.fillStyle = 'rgba(248,244,228,.95)';
   ctx.beginPath(); ctx.arc(mx, my, 56, 0, 7); ctx.fill();
-  ctx.strokeStyle = 'rgba(120,120,110,.4)'; ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(120,120,110,.45)'; ctx.lineWidth = 1.2;
   ctx.beginPath(); ctx.arc(mx, my, 56, 0, 7); ctx.stroke();
   // 小瀛洲
-  S.hills(AX + 100, R1 - 60, 640, 46, '90,102,104', 0.2, 3.1);
-  S.pavilion(700, 630, 90, 74, '56,60,62');
-  S.tree(1050, 628, 0.7, '80,96,84');
-  S.water(AX, R1, 660, B1, '92,108,124', 0.2);
-  // 月光倒影
-  for (let y = 680; y < B1 - 10; y += 16) S.seg(mx + Math.sin(y * 0.3) * 8 - 20, y, mx + Math.sin(y * 0.3) * 8 + 20, y, { w: 1.6, a: 0.16, col: '226,222,200', passes: 1 });
-  // 三塔
+  S.hills(AX + 100, R1 - 60, 640, 46, '76,88,92', 0.28, 3.1);
+  S.pavilion(700, 630, 90, 74, '50,54,58');
+  S.tree(1050, 628, 0.7, '70,86,76');
+  S.water(AX, R1, 660, B1, '76,94,112', 0.3);
+  // 月光倒影：一道柔光带 + 由近及远的粼粼碎金
+  const mg = ctx.createLinearGradient(0, 670, 0, B1);
+  mg.addColorStop(0, 'rgba(232,228,204,0)');
+  mg.addColorStop(0.35, 'rgba(232,228,204,.16)');
+  mg.addColorStop(1, 'rgba(232,228,204,.05)');
+  ctx.save(); ctx.filter = 'blur(10px)';
+  ctx.fillStyle = mg;
+  ctx.beginPath();
+  ctx.moveTo(mx - 26, 670); ctx.lineTo(mx + 26, 670);
+  ctx.lineTo(mx + 72, B1); ctx.lineTo(mx - 72, B1);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+  for (let y = 684; y < B1 - 8; y += 13) {
+    const k = (y - 684) / (B1 - 692);
+    const half = 16 + k * 46, wob = Math.sin(y * 0.35) * 7;
+    S.seg(mx + wob - half, y, mx + wob + half, y, { w: 1.8, a: 0.36 - k * 0.12, col: '238,234,210', passes: 1, jit: 1.5 });
+  }
+  // 三塔：中塔避开中缝
   S.stoneLantern3(560, 760, 1.5, true);
-  S.stoneLantern3(880, 800, 1.7, true);
+  S.stoneLantern3(940, 800, 1.7, true);
   S.stoneLantern3(1200, 756, 1.45, true);
   S.birds(420, AY + 90, 2, 0.9);
 }
 
 /* 06 运河夜色：拱宸桥三孔 + 桥西人家 + 漕船 */
 function yunhe(S, ctx) {
-  S.band(AX, R1, AY + 80, 150, '110,120,138', 0.18);
-  S.band(AX, R1, AY + 210, 80, '150,140,130', 0.1);
-  // 桥西历史街区（右）
+  S.band(AX, R1, AY + 80, 150, '96,108,128', 0.26);
+  S.band(AX, R1, AY + 210, 80, '140,132,124', 0.14);
+  // 桥西历史街区（白墙直角，暖窗）
   const house = (x, w, h) => {
     const y = 640;
-    S.poly([[x, y], [x + w, y], [x + w, y - h], [x, y - h]], '232,226,210', 0.3);
-    S.line([[x, y], [x, y - h], [x + w, y - h], [x + w, y]], { w: 1.4, a: 0.65 });
+    S.poly([[x, y], [x + w, y], [x + w, y - h], [x, y - h]], '232,226,210', 0.32);
+    S.path([[x, y], [x, y - h], [x + w, y - h], [x + w, y]], { w: 1.4, a: 0.65 });
     S.roof(x + w / 2, y - h, w * 1.1, 22, '52,56,62');
     for (let k = 0; k < 2; k++) {
       const wx = x + w * (k + 0.5) / 2;
-      ctx.fillStyle = 'rgba(226,170,96,.5)'; ctx.fillRect(wx - 8, y - h * 0.6, 16, 20);
-      S.line([[wx - 8, y - h * 0.6], [wx + 8, y - h * 0.6], [wx + 8, y - h * 0.6 + 20], [wx - 8, y - h * 0.6 + 20], [wx - 8, y - h * 0.6]], { w: 0.9, a: 0.5, passes: 1 });
+      ctx.fillStyle = 'rgba(226,170,96,.6)'; ctx.fillRect(wx - 8, y - h * 0.6, 16, 20);
+      S.path([[wx - 8, y - h * 0.6], [wx + 8, y - h * 0.6], [wx + 8, y - h * 0.6 + 20], [wx - 8, y - h * 0.6 + 20], [wx - 8, y - h * 0.6]], { w: 0.9, a: 0.5, passes: 1 });
     }
   };
   house(1180, 110, 120); house(1300, 130, 150); house(1440, 120, 110);
   house(240, 120, 130); house(370, 100, 100);
-  S.water(AX, R1, 660, B1, '86,100,120', 0.22);
+  S.water(AX, R1, 660, B1, '74,90,110', 0.3);
   // 拱宸桥
   S.stoneBridge(880, 620, 760, 150, 3, '60,58,54');
   for (const k of [-0.36, -0.12, 0.12, 0.36]) S.lantern(880 + 760 * k, 620 - 150 * 0.34 * Math.sin(Math.PI * (k + 0.5)) - 24, 0.9, true);
   S.boat(880, 780, 1.3);
   S.boat(1350, 840, 1, false);
   // 灯影
-  for (const x of [610, 790, 970, 1150]) S.refl(x, 700, 60, '216,160,90', 0.26, 1.4);
-  for (const x of [1240, 1360, 1500]) S.refl(x, 668, 44, '216,170,100', 0.2, 1.2);
+  for (const x of [610, 790, 970, 1150]) S.refl(x, 700, 72, '216,160,90', 0.36, 1.4);
+  for (const x of [1240, 1360, 1500]) S.refl(x, 668, 54, '216,170,100', 0.3, 1.2);
   S.birds(420, AY + 70, 2, 0.9);
 }
 
 /* 07 湖东暮色：保俶塔 + 雷峰塔 + 湖面游船 */
 function hudong(S, ctx) {
-  S.band(AX, R1, AY + 70, 120, '216,160,110', 0.16);
-  S.band(AX, R1, AY + 190, 90, '206,140,110', 0.12);
+  S.band(AX, R1, AY + 70, 120, '216,158,108', 0.2);
+  S.band(AX, R1, AY + 190, 90, '206,138,108', 0.16);
   // 落日
   const sg = ctx.createRadialGradient(1180, 560, 6, 1180, 560, 78);
   sg.addColorStop(0, 'rgba(240,186,116,.75)');
@@ -251,69 +270,91 @@ function hudong(S, ctx) {
   // 夕照山 + 雷峰塔（右）
   S.hills(1000, R1, 640, 110, '130,110,92', 0.22, 4.2);
   S.pagoda(1380, 580, 110, 5, 40, { col: '76,58,44', wash: '190,140,90', glow: true });
-  S.water(AX, R1, 660, B1, '140,130,124', 0.16);
-  S.refl(1180, 670, 120, '226,170,110', 0.24, 2);
-  S.refl(1380, 670, 80, '120,90,60', 0.2, 1.6);
-  S.refl(400, 660, 60, '90,84,70', 0.16, 1.4);
+  S.water(AX, R1, 660, B1, '140,128,122', 0.2);
+  S.refl(1180, 670, 130, '226,170,110', 0.34, 2);
+  S.refl(1380, 670, 84, '120,90,60', 0.26, 1.6);
+  S.refl(400, 660, 64, '90,84,70', 0.22, 1.4);
   S.boat(700, 780, 1.2); S.boat(980, 830, 1, false); S.boat(520, 860, 0.9);
-  // 前景柳枝
-  S.curve(AX + 10, AY + 10, AX + 120, AY + 40, AX + 210, AY + 90, { w: 2, a: 0.6, col: '70,80,58' });
+  // 前景柳枝：右移避开左侧竖排题字，轻拂保俶塔梢
+  S.curve(AX + 270, AY + 10, AX + 380, AY + 40, AX + 470, AY + 90, { w: 2, a: 0.6, col: '70,80,58' });
   for (let i = 0; i < 6; i++) {
-    const bx = AX + 60 + i * 28, by = AY + 26 + i * 11;
-    S.curve(bx, by, bx + 8, by + 60, bx + 16, by + 110 + i * 6, { w: 1, a: 0.45, col: '70,88,60', passes: 1 });
-    for (let t = 0.2; t < 0.95; t += 0.14) S.seg(bx + 16 * t * t, by + (110 + i * 6) * t, bx + 16 * t * t + 4, by + (110 + i * 6) * t + 5, { w: 0.8, a: 0.35, col: '70,88,60', passes: 1 });
+    const bx = AX + 320 + i * 28, by = AY + 26 + i * 11;
+    S.curve(bx, by, bx + 8, by + 60, bx + 16, by + 110 + i * 6, { w: 1, a: 0.5, col: '70,88,60', passes: 1 });
+    for (let t = 0.2; t < 0.95; t += 0.14) S.seg(bx + 16 * t * t, by + (110 + i * 6) * t, bx + 16 * t * t + 4, by + (110 + i * 6) * t + 5, { w: 0.8, a: 0.4, col: '70,88,60', passes: 1 });
   }
   S.birds(900, AY + 80, 4);
 }
 
-/* 08 城市阳台：钱江新城——金球会议中心 + 月牙大剧院 + 双子塔 */
+/* 08 城市阳台：钱江新城——金球会议中心 + 月牙大剧院 + 扭转双子塔 */
 function chengshi(S, ctx) {
-  S.band(AX, R1, AY + 70, 120, '170,180,190', 0.12);
+  S.band(AX, R1, AY + 70, 120, '168,178,190', 0.16);
   const base = 680;
-  // 背景楼群
+  // 背景楼群（直角轮廓）
   const tower = (x, w, h, grid = true) => {
-    S.poly([[x, base], [x + w, base], [x + w, base - h], [x, base - h]], '150,158,166', 0.18);
-    S.line([[x, base], [x, base - h], [x + w, base - h], [x + w, base]], { w: 1.4, a: 0.65 });
-    if (grid) for (let y = base - h + 16; y < base - 8; y += 18) S.seg(x + 4, y, x + w - 4, y, { w: 0.7, a: 0.22, passes: 1 });
+    S.poly([[x, base], [x + w, base], [x + w, base - h], [x, base - h]], '150,158,166', 0.2);
+    S.path([[x, base], [x, base - h], [x + w, base - h], [x + w, base]], { w: 1.4, a: 0.65 });
+    if (grid) for (let y = base - h + 16; y < base - 8; y += 18) S.seg(x + 4, y, x + w - 4, y, { w: 0.7, a: 0.24, passes: 1 });
   };
   tower(250, 70, 240); tower(340, 56, 300); tower(410, 80, 200); tower(1500, 70, 260); tower(1580, 50, 190);
   // 国际会议中心（金球）
   const sx = 640, sy = base - 100, sr = 104;
-  S.blob(sx, sy, sr, sr, '206,164,92', 0.3, 0.05);
-  ctx.strokeStyle = 'rgba(120,96,52,.6)'; ctx.lineWidth = 1.5;
+  S.blob(sx, sy, sr, sr, '206,164,92', 0.32, 0.05);
+  ctx.strokeStyle = 'rgba(120,96,52,.65)'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(sx, sy, sr, 0, 7); ctx.stroke();
   for (let i = 1; i < 5; i++) {
-    ctx.strokeStyle = 'rgba(120,96,52,.3)'; ctx.lineWidth = 0.9;
+    ctx.strokeStyle = 'rgba(120,96,52,.32)'; ctx.lineWidth = 0.9;
     ctx.beginPath(); ctx.ellipse(sx, sy, sr * Math.sin(i * 0.32), sr, 0, 0, 7); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(sx, sy, sr, sr * Math.sin(i * 0.32), 0, 0, 7); ctx.stroke();
   }
   S.seg(sx - sr * 0.7, base, sx + sr * 0.7, base, { w: 1.8, a: 0.7 });
   S.seg(sx - sr * 0.5, base, sx - sr * 0.4, sy + sr * 0.8, { w: 1.3, a: 0.55 });
   S.seg(sx + sr * 0.5, base, sx + sr * 0.4, sy + sr * 0.8, { w: 1.3, a: 0.55 });
-  // 杭州大剧院（月牙）
+  // 杭州大剧院（月牙）：两条弧之间拉接幕墙分格，避免笔触溢出轮廓
   const tx = 980;
-  S.curve(tx - 150, base, tx - 40, base - 260, tx + 130, base - 190, { w: 2, a: 0.8, col: '80,86,94' });
-  S.curve(tx - 150, base, tx + 10, base - 120, tx + 130, base - 190, { w: 1.6, a: 0.7, col: '80,86,94' });
-  S.poly([[tx - 150, base], [tx - 40, base - 250], [tx + 130, base - 190], [tx + 10, base - 110]], '160,170,182', 0.16);
-  for (let i = 1; i < 7; i++) {
-    const t = i / 7;
-    S.seg(tx - 150 + 280 * t, base - 40 * t, tx - 40 + 170 * t, base - 250 + 60 * t, { w: 0.8, a: 0.3, col: '80,86,94', passes: 1 });
+  const A0 = [tx - 150, base], A1 = [tx - 40, base - 260], A2 = [tx + 130, base - 190];
+  const B0 = [tx - 150, base], B1 = [tx + 10, base - 120], B2 = [tx + 130, base - 190];
+  const q = (t, p0, p1, p2) => [(1 - t) * (1 - t) * p0[0] + 2 * (1 - t) * t * p1[0] + t * t * p2[0], (1 - t) * (1 - t) * p0[1] + 2 * (1 - t) * t * p1[1] + t * t * p2[1]];
+  S.curve(A0[0], A0[1], A1[0], A1[1], A2[0], A2[1], { w: 2, a: 0.8, col: '80,86,94' });
+  S.curve(B0[0], B0[1], B1[0], B1[1], B2[0], B2[1], { w: 1.6, a: 0.7, col: '80,86,94' });
+  S.poly([[tx - 150, base], [tx - 40, base - 250], [tx + 130, base - 190], [tx + 10, base - 110]], '160,170,182', 0.18);
+  for (let i = 1; i < 9; i++) {
+    const t = i / 9, p = q(t, A0, A1, A2), r = q(t, B0, B1, B2);
+    S.seg(p[0], p[1], r[0], r[1], { w: 0.8, a: 0.32, col: '80,86,94', passes: 1 });
   }
-  // 来福士双子（扭转）
-  for (const [tx2, lean] of [[1250, 26], [1340, -26]]) {
-    const h = 330, w = 64;
-    const pts = [[tx2, base], [tx2 + w, base], [tx2 + w + lean, base - h], [tx2 + lean, base - h]];
-    S.poly(pts, '150,160,172', 0.2);
-    S.line([...pts, pts[0]], { w: 1.5, a: 0.7 });
-    for (let i = 1; i < 12; i++) {
-      const t = i / 12, o = lean * t;
-      S.seg(tx2 + o, base - h * t, tx2 + w + o, base - h * t + 8, { w: 0.7, a: 0.26, passes: 1 });
+  // 来福士双子（扭转）：轴线蛇形收分 + 逐层反向楼板 + 扭转棱线
+  const twistTower = (cx, w, h, dir) => {
+    const top = base - h, N = 20;
+    const edge = (side) => {
+      const pts = [];
+      for (let i = 0; i <= N; i++) {
+        const t = i / N, y = base - h * t;
+        const sway = Math.sin(t * Math.PI * 2) * (w * 0.14) * dir;
+        const half = (w / 2) * (1 - 0.18 * t);
+        pts.push([cx + sway + side * half, y]);
+      }
+      return pts;
+    };
+    const L = edge(-1), R = edge(1);
+    S.poly([...L, ...R.slice().reverse()], '150,160,172', 0.22);
+    S.line(L, { w: 1.6, a: 0.75 });
+    S.line(R, { w: 1.6, a: 0.75 });
+    S.seg(L[N][0], top, R[N][0], top, { w: 1.6, a: 0.75 });
+    for (let i = 1; i < 16; i++) {
+      const t = i / 16, li = Math.round(t * N);
+      const tilt = Math.cos(t * Math.PI * 2) * 6 * dir;
+      S.seg(L[li][0], L[li][1] + tilt, R[li][0], R[li][1] - tilt, { w: 0.8, a: 0.34, passes: 1 });
     }
-  }
-  S.water(AX, R1, base + 10, B1, '120,134,146', 0.16);
-  S.refl(sx, base + 16, 130, '200,160,92', 0.26, 2.2);
-  S.refl(tx, base + 16, 100, '110,120,132', 0.2, 1.8);
-  S.refl(1290, base + 16, 110, '110,120,132', 0.18, 1.8);
+    S.curve(cx - (w / 2) * dir, base, cx + w * 0.2 * dir, base - h * 0.5, cx + (w / 2) * dir * 0.7, top, { w: 1.1, a: 0.5, passes: 1 });
+  };
+  twistTower(1270, 64, 330, 1);
+  twistTower(1370, 64, 330, -1);
+  // 江面与倒影：一道岸线把天际线落在水上
+  S.water(AX, R1, base + 10, B1, '86,102,120', 0.3);
+  S.seg(AX, base + 10, R1, base + 10, { w: 1.2, a: 0.3, col: '90,104,118', passes: 1 });
+  S.refl(sx, base + 16, 150, '200,160,92', 0.42, 2.2);
+  S.refl(tx, base + 16, 120, '110,120,132', 0.32, 1.8);
+  S.refl(1270, base + 16, 130, '110,120,132', 0.32, 1.8);
+  S.refl(1370, base + 16, 130, '110,120,132', 0.32, 1.8);
   S.boat(800, 810, 1, false);
   S.birds(480, AY + 70, 3);
 }
@@ -328,20 +369,22 @@ function shiji(S, ctx) {
   // 摊位
   const stall = (x, w, sign, col) => {
     const y = 850, h = 150;
-    S.seg(x, y, x, y - h, { w: 2, a: 0.75 }); S.seg(x + w, y, x + w, y - h, { w: 2, a: 0.75 });
-    // 条纹棚
+    S.seg(x, y, x, y - h, { w: 2.2, a: 0.8 }); S.seg(x + w, y, x + w, y - h, { w: 2.2, a: 0.8 });
+    // 条纹棚（直角梯形棚顶 + 波浪檐口）
     const ay = y - h, aw = w + 26;
-    S.poly([[x - 13, ay], [x + w + 13, ay], [x + w + 4, ay - 34], [x - 4, ay - 34]], col, 0.26);
-    S.line([[x - 13, ay], [x + w + 13, ay], [x + w + 4, ay - 34], [x - 4, ay - 34], [x - 13, ay]], { w: 1.5, a: 0.7 });
+    S.poly([[x - 13, ay], [x + w + 13, ay], [x + w + 4, ay - 34], [x - 4, ay - 34]], col, 0.32);
+    S.path([[x - 13, ay], [x + w + 13, ay], [x + w + 4, ay - 34], [x - 4, ay - 34], [x - 13, ay]], { w: 1.5, a: 0.7 });
     for (let i = 1; i < 6; i++) {
       const t = i / 6;
-      S.seg(x - 13 + aw * t, ay, x - 4 + (aw - 18) * t, ay - 34, { w: 0.9, a: 0.35, passes: 1 });
-      S.curve(x - 13 + aw * (t - 0.08), ay, x - 13 + aw * (t - 0.04), ay + 7, x - 13 + aw * t, ay, { w: 1, a: 0.5, passes: 1 });
+      S.seg(x - 13 + aw * t, ay, x - 4 + (aw - 18) * t, ay - 34, { w: 0.9, a: 0.4, passes: 1 });
+      S.curve(x - 13 + aw * (t - 0.08), ay, x - 13 + aw * (t - 0.04), ay + 7, x - 13 + aw * t, ay, { w: 1, a: 0.55, passes: 1 });
     }
-    // 台面货物
-    S.seg(x + 4, y - 56, x + w - 4, y - 56, { w: 1.6, a: 0.7 });
-    for (let i = 0; i < 5; i++) S.blob(x + w * (i + 0.5) / 5, y - 64, 8, 6, '170,140,90', 0.3, 0.2);
-    ctx.fillStyle = 'rgba(60,52,42,.8)'; ctx.fillRect(x + w / 2 - 16, ay - 30, 32, 26);
+    // 台面与货物
+    S.seg(x + 4, y - 56, x + w - 4, y - 56, { w: 1.8, a: 0.75 });
+    S.seg(x + 4, y - 48, x + w - 4, y - 48, { w: 1.2, a: 0.5, passes: 1 });
+    const goods = ['170,140,90', '150,110,80', '120,140,100', '180,120,90', '140,120,150'];
+    for (let i = 0; i < 5; i++) S.blob(x + w * (i + 0.5) / 5, y - 64, 8, 6, goods[i], 0.42, 0.2);
+    ctx.fillStyle = 'rgba(60,52,42,.82)'; ctx.fillRect(x + w / 2 - 16, ay - 30, 32, 26);
     S.label(sign, x + w / 2, ay - 17, 17, '240,232,210');
     S.lantern(x + 10, ay + 16, 0.8);
   };
@@ -350,16 +393,17 @@ function shiji(S, ctx) {
   stall(820, 150, '扇', '150,110,70');
   stall(1020, 150, '绸', '120,90,110');
   // 串灯
-  S.curve(400, 660, 780, 730, 1180, 668, { w: 0.9, a: 0.4, passes: 1 });
+  S.curve(400, 616, 780, 656, 1180, 622, { w: 0.9, a: 0.45, passes: 1 });
   for (let i = 1; i < 9; i++) {
     const t = i / 9, u = 1 - t;
     const lx = u * u * 400 + 2 * u * t * 780 + t * t * 1180;
-    const ly = u * u * 660 + 2 * u * t * 730 + t * t * 668;
-    S.blob(lx, ly + 6, 3, 3.6, '220,170,90', 0.5, 0.1);
+    const ly = u * u * 616 + 2 * u * t * 656 + t * t * 622;
+    S.blob(lx, ly + 6, 6, 6, '236,190,110', 0.22, 0.1);
+    S.blob(lx, ly + 6, 3, 3.6, '228,176,92', 0.6, 0.1);
   }
   // 石板与行人
-  for (let i = 0; i < 6; i++) S.seg(300, 868 + i * 12, 1240, 870 + i * 12, { w: 0.8, a: 0.12, passes: 1 });
-  S.figure(560, 910, 1.2); S.figure(760, 906, 1.1); S.figure(940, 914, 1.25); S.figure(1130, 902, 1);
+  for (let i = 0; i < 6; i++) S.seg(300, 868 + i * 12, 1240, 870 + i * 12, { w: 0.8, a: 0.15, passes: 1 });
+  S.figure(560, 912, 1.5); S.figure(760, 908, 1.4); S.figure(940, 916, 1.55); S.figure(1130, 904, 1.25);
   S.birds(1300, AY + 70, 2);
 }
 
